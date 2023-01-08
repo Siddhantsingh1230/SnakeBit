@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+
+<html>
+
+  <head>
+
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+
+    <title>My Snake</title>
+
+    <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
+
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+
+    <style type="text/css" media="all">
+
+      * {
+
+        margin: 0px;
+
+        padding: 0px;
+
+      }
+
+      #counter {
+
+        position: fixed;
+
+        height: 30px;
+
+        width: 30px;
+
+        background-color: black;
+
+        bottom: 210px;
+
+        font-family: "Poppins", sans-serif;
+
+        left: 10px;
+
+        color: white;
+
+        font-size: 20px;
+
+        box-sizing: border-box;
+
+        padding: 3px;
+
+        border-radius: 50%;
+
+        text-align: center;
+
+        font-weight: bold;
+
+      }
+
+      canvas {
+
+        height: 70vh;
+
+        width: 100vw;
+
+        background-color: black;
+
+        border-radius: 0px 0px 25px 25px;
+
+      }
+
+      .btn {
+
+        font-size: 40px;
+
+        position: fixed;
+
+      }
+
+      #up {
+
+        bottom: 140px;
+
+        right: 160px;
+
+      }
+
+      #down {
+
+        bottom: 20px;
+
+        right: 160px;
+
+      }
+
+      #right {
+
+        bottom: 80px;
+
+        right: 90px;
+
+      }
+
+      #left {
+
+        bottom: 80px;
+
+        left: 80px;
+
+      }
+
+      .btn:active {
+
+        opacity: 0.6;
+
+      }
+
+    </style>
+
+  </head>
+
+  <body>
+
+    <canvas id="canvas"></canvas>
+
+    <div id="up" class="btn">🔼</div>
+
+    <div id="right" class="btn">▶️</div>
+
+    <div id="down" class="btn">🔽</div>
+
+    <div id="left" class="btn">◀️</div>
+
+    <div id="counter">0</div>
+
+    <script type="text/javascript" charset="utf-8">
+
+      let canvas = document.getElementById("canvas");
+
+      let ctx = canvas.getContext("2d");
+
+      let tileCount = 20;
+
+      let tileSize = canvas.clientWidth / tileCount - 2;
+
+      let foodX = Math.floor(Math.random() * 14);
+
+      foodX = foodX.toFixed(0);
+
+      let foodY = Math.floor(Math.random() * 7);
+
+      foodY = foodY.toFixed(0);
+
+      let headX = 8;
+
+      let headY = 5;
+
+      let velocity = 170;
+
+      let up = document.getElementById("up");
+
+      let down = document.getElementById("down");
+
+      let right = document.getElementById("right");
+
+      let leftt = document.getElementById("left");
+
+      let counter = document.getElementById("counter");
+
+      let count = 0;
+
+      let snakebody = [];
+
+      class snake {
+
+        constructor() {
+
+          this.tailX = -1;
+
+          this.tailY = -1;
+
+          snakebody.push(this);
+
+        }
+
+        drawTail() {
+
+          ctx.fillStyle = "hotpink";
+
+          ctx.fillRect(
+
+            this.tailX * tileCount,
+
+            this.tailY * tileCount,
+
+            tileSize,
+
+            tileSize - 9.8
+
+          );
+
+        }
+
+      }
+
+      /*new snake();
+
+      new snake();
+
+      new snake();
+
+      new snake();
+
+      new snake();
+
+      new snake();
+
+      new snake();
+
+      new snake();
+
+      new snake();*/
+
+      function drawFood() {
+
+        if (headX == foodX && headY == foodY) {
+
+          foodY = Math.floor(Math.random() * 7);
+
+          foodY = foodY.toFixed(0);
+
+          foodX = Math.floor(Math.random() * 14);
+
+          foodX = foodX.toFixed(0);
+
+          count++;
+
+          counter.innerText = count;
+
+          new snake();
+
+        }
+
+        ctx.fillStyle = "red";
+
+        ctx.fillRect(
+
+          foodX * tileCount,
+
+          foodY * tileCount,
+
+          tileSize,
+
+          tileSize - 9.8
+
+        );
+
+      }
+
+      function drawSnake() {
+
+        ctx.fillStyle = "cyan";
+
+        ctx.fillRect(
+
+          headX * tileCount,
+
+          headY * tileCount,
+
+          tileSize,
+
+          tileSize - 9.8
+
+        );
+
+        // for debugging
+
+        // console.log(headX + "-" + headY);
+
+      }
+
+      function clrscreen() {
+
+        ctx.fillStyle = "black"; // make screen black
+
+        ctx.fillRect(0, 0, canvas.clientWidth, canvas.clientHeight);
+
+      }
+
+      drawFood();
+
+      drawSnake();
+
+      function gameover() {
+
+        if (headY < 0 || headX < 0 || headY > 7 || headX > 14) {
+
+          console.log("game");
+
+          document.write("Wall Ahead!! You Blind 😵");
+
+          setTimeout(function () {
+
+            alert("  GameOver\n  Retry?");
+
+            location.reload();
+
+          }, 100);
+
+        } else {
+
+          for (i = snakebody.length-1; i >=0; i--) {
+
+            if (headX==snakebody[i].tailX  && headY==snakebody[i].tailY  ) {
+
+              console.log("game");
+
+              document.write("Enough Hungry To Eat Yourself 😵‍💫");
+
+              setTimeout(function () {
+
+                alert("  GameOver\n  Retry?");
+
+                location.reload();
+
+              }, 100);
+
+              break;
+
+            }
+
+          }
+
+        }
+
+        
+
+      }
+
+      let evt;
+
+      function moveup(e) {
+
+        evt = e;
+
+        let interval = setInterval(function () {
+
+          if (e != evt) {
+
+            clearInterval(interval);
+
+            headY = headY + 0.25;
+
+          }
+
+          clrscreen();
+
+          drawFood();
+
+          if (count > 0) {
+
+            for (i = snakebody.length - 1; i >= 0; i--) {
+
+              if (i == 0) {
+
+                snakebody[i].tailX = headX;
+
+                snakebody[i].tailY = headY;
+
+                snakebody[i].drawTail();
+
+              } else {
+
+                snakebody[i].tailX = snakebody[i - 1].tailX;
+
+                snakebody[i].tailY = snakebody[i - 1].tailY;
+
+                snakebody[i].drawTail();
+
+              }
+
+            }
+
+          }
+
+          headY = headY - 0.25;
+
+          drawSnake();
+
+          gameover();
+
+        }, velocity - 20);
+
+      }
+
+      function movedown(e) {
+
+        evt = e;
+
+        let interval = setInterval(function () {
+
+          if (e != evt) {
+
+            clearInterval(interval);
+
+            headY = headY - 0.25;
+
+          }
+
+          clrscreen();
+
+          drawFood();
+
+          if (count > 0) {
+
+            for (i = snakebody.length - 1; i >= 0; i--) {
+
+              if (i == 0) {
+
+                snakebody[i].tailX = headX;
+
+                snakebody[i].tailY = headY;
+
+                snakebody[i].drawTail();
+
+              } else {
+
+                snakebody[i].tailX = snakebody[i - 1].tailX;
+
+                snakebody[i].tailY = snakebody[i - 1].tailY;
+
+                snakebody[i].drawTail();
+
+              }
+
+            }
+
+          }
+
+          headY = headY + 0.25;
+
+          drawSnake();
+
+          gameover();
+
+        }, velocity - 20);
+
+      }
+
+      function moveright(e) {
+
+        evt = e;
+
+        let interval = setInterval(function () {
+
+          if (e != evt) {
+
+            clearInterval(interval);
+
+            headX--;
+
+            //tailX--;
+
+          }
+
+          clrscreen();
+
+          drawFood();
+
+          if (count > 0) {
+
+            for (i = snakebody.length - 1; i >= 0; i--) {
+
+              if (i == 0) {
+
+                snakebody[i].tailX = headX;
+
+                snakebody[i].tailY = headY;
+
+                snakebody[i].drawTail();
+
+              } else {
+
+                snakebody[i].tailX = snakebody[i - 1].tailX;
+
+                snakebody[i].tailY = snakebody[i - 1].tailY;
+
+                snakebody[i].drawTail();
+
+              }
+
+            }
+
+          }
+
+          headX++;
+
+          drawSnake();
+
+          gameover();
+
+        }, velocity);
+
+      }
+
+      function moveleft(e) {
+
+        evt = e;
+
+        let interval = setInterval(function () {
+
+          if (e != evt) {
+
+            clearInterval(interval);
+
+            headX++;
+
+          }
+
+          clrscreen();
+
+          drawFood();
+
+          if (count > 0) {
+
+            for (i = snakebody.length - 1; i >= 0; i--) {
+
+              if (i == 0) {
+
+                snakebody[i].tailX = headX;
+
+                snakebody[i].tailY = headY;
+
+                snakebody[i].drawTail();
+
+              } else {
+
+                snakebody[i].tailX = snakebody[i - 1].tailX;
+
+                snakebody[i].tailY = snakebody[i - 1].tailY;
+
+                snakebody[i].drawTail();
+
+              }
+
+            }
+
+          }
+
+          headX--;
+
+          drawSnake();
+
+          gameover();
+
+        }, velocity);
+
+      }
+
+      up.addEventListener("click", moveup);
+
+      down.addEventListener("click", movedown);
+
+      right.addEventListener("click", moveright);
+
+      left.addEventListener("click", moveleft);
+
+    </script>
+
+  </body>
+
+</html>
+
